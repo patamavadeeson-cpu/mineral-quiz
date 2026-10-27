@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>นักสืบแร่ — ทบทวนการจำแนกแร่</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;600&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef3f1;--card:#fff;--ink:#16262c;--mute:#52666d;--line:#cfdcd8;--acc:#5b3fa8;--accbg:#ece6f8;--ok:#17805f;--okbg:#dff3ea;--no:#a4491f;--nobg:#fbe9df;--gold:#d99a1c;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a1e;--card:#172429;--ink:#e6f0ee;--mute:#9db3b0;--line:#2b3d42;--acc:#b49cf0;--accbg:#2a2342;--ok:#5fd0a6;--okbg:#15382d;--no:#f0a27c;--nobg:#3a2619;--gold:#f0b94a}}
+:root[data-theme="dark"]{--bg:#0f1a1e;--card:#172429;--ink:#e6f0ee;--mute:#9db3b0;--line:#2b3d42;--acc:#b49cf0;--accbg:#2a2342;--ok:#5fd0a6;--okbg:#15382d;--no:#f0a27c;--nobg:#3a2619;--gold:#f0b94a}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:400 18px/1.65 'Sarabun','Noto Sans Thai',system-ui,sans-serif}
+main{max-width:680px;margin:0 auto;padding:20px 16px 48px}
+h1,h2,h3{font-family:'Prompt','Sarabun',sans-serif;font-weight:600;line-height:1.35;margin:0}
+h1{font-size:2rem}h2{font-size:1.25rem}h3{font-size:1.05rem}
+p{margin:0 0 .6em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+.sub{color:var(--mute)}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.btn{background:var(--acc);color:var(--card);border:0;border-radius:12px;padding:12px 24px;font-weight:600;min-height:48px}
+.btn.ghost{background:transparent;color:var(--acc);border:2px solid var(--acc)}
+.rules{list-style:none;padding:0;margin:18px 0 24px;display:grid;gap:10px}
+.rules li{display:flex;gap:12px;align-items:flex-start}
+.rules b{flex:none;width:34px;height:34px;border-radius:10px;background:var(--accbg);color:var(--acc);display:grid;place-items:center;font-family:'Prompt',sans-serif}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:10px}
+.facets{display:flex;gap:7px;flex-wrap:wrap}
+.f{width:14px;height:14px;transform:rotate(45deg);border:2px solid var(--line);border-radius:3px}
+.f.now{border-color:var(--acc)}.f.done{background:var(--mute);border-color:var(--mute)}.f.hit{background:var(--acc);border-color:var(--acc)}
+.gems{font-family:'Prompt',sans-serif;font-weight:600;color:var(--acc)}
+.tbar{height:10px;border-radius:6px;background:var(--line);overflow:hidden;margin:14px 0 4px}
+.tbar i{display:block;height:100%;width:100%;background:var(--acc);transition:background .3s}
+.tbar.low i{background:var(--gold)}
+.tt{text-align:right;font-size:.9rem;color:var(--mute)}
+.tag{display:inline-block;background:var(--accbg);color:var(--acc);border-radius:8px;padding:2px 10px;font-size:.88rem;font-weight:600;margin-bottom:8px}
+.q{font-size:1.1rem;font-weight:500;margin:0 0 16px}
+.opts{display:grid;gap:10px}
+.opt{display:flex;gap:12px;text-align:left;width:100%;background:var(--card);color:var(--ink);border:2px solid var(--line);border-radius:12px;padding:12px 14px;line-height:1.5}
+.opt:hover:not(:disabled){border-color:var(--acc)}
+.opt span:first-child{flex:none;width:28px;height:28px;border-radius:8px;background:var(--accbg);color:var(--acc);display:grid;place-items:center;font-weight:600;font-size:.95rem}
+.opt.right{border-color:var(--ok);background:var(--okbg)}.opt.right span:first-child{background:var(--ok);color:var(--card)}
+.opt.wrong{border-color:var(--no);background:var(--nobg)}.opt.wrong span:first-child{background:var(--no);color:var(--card)}
+.opt:disabled{cursor:default}
+.fb{margin-top:16px;border-radius:12px;padding:16px 18px}
+.fb.ok{background:var(--okbg)}.fb.no{background:var(--nobg)}
+.fb h3{margin-bottom:6px}.fb.ok h3{color:var(--ok)}.fb.no h3{color:var(--no)}
+.fb .btn{margin-top:10px}
+.big{font-family:'Prompt',sans-serif;font-size:3rem;font-weight:600;color:var(--acc);line-height:1.2}
+.bars{display:grid;gap:10px;margin:14px 0 0}
+.bar{display:grid;grid-template-columns:150px 1fr 44px;gap:10px;align-items:center;font-size:.95rem}
+.bar div{height:12px;background:var(--line);border-radius:6px;overflow:hidden}.bar div i{display:block;height:100%;background:var(--acc)}
+.sec{margin-top:18px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--accbg);color:var(--acc)}
+.rv{border-left:4px solid var(--no);padding:4px 0 4px 14px;margin:12px 0}
+.rv p{margin:0 0 .3em;font-size:.97rem}
+@media (max-width:480px){.bar{grid-template-columns:110px 1fr 40px}h1{font-size:1.6rem}.card{padding:18px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+var TAGS=['สีภายนอก','สีสเตรก','ความแข็ง','แนวแตกเรียบ','ใช้หลักฐานหลายด้าน'];
+var Q=[
+{t:0,q:'ตัวอย่างหิน 3 ก้อน มีสีม่วง สีชมพู และไม่มีสี ทั้งหมดขูดกระจกได้ มีดเหล็กขูดไม่เป็นรอย และเมื่อตีแตกผิวโค้งเหมือนเปลือกหอย ไม่มีแนวแตกเรียบ ข้อใดสรุปได้สมเหตุสมผลที่สุด?',
+o:['สีต่างกัน แปลว่าเป็นแร่ต่างชนิดกันเสมอ','น่าจะเป็นแร่ชนิดเดียวกัน (ควอตซ์) เพราะสมบัติอื่นตรงกัน ส่วนสีต่างกันเพราะสิ่งเจือปน','เฉพาะก้อนสีม่วงเท่านั้นที่เป็นแร่จริง','สรุปอะไรไม่ได้เลย เพราะสีไม่เหมือนกัน'],a:1,
+e:'สีภายนอกเปลี่ยนได้ตามสิ่งเจือปนเพียงเล็กน้อย (ม่วง = อะเมทิสต์ ชมพู = โรสควอตซ์) แต่ความแข็งและลักษณะรอยแตกขึ้นกับโครงสร้างผลึก จึงคงที่กว่ามาก สีจึงเป็นหลักฐานที่น่าเชื่อถือน้อยที่สุดในสี่อย่าง'},
+{t:4,q:'แร่ก้อนหนึ่งสีเหลืองทอง เงาวาวแบบโลหะ ผลทดสอบข้อใดเป็นหลักฐานที่ "ตัดทองคำออก" ได้ชัดที่สุด?',
+o:['มีความวาวแบบโลหะ','สีเหลืองทองสม่ำเสมอทั้งก้อน','ขีดบนแผ่นสเตรกได้ผงสีดำแกมเขียว และขูดกระจกได้','เมื่อดูด้วยตาเปล่า เห็นเหมือนทองมาก'],a:2,
+e:'ทองคำให้สีสเตรกเหลืองทองและอ่อนมาก (ราว 2.5–3) ขูดกระจกไม่ได้ ส่วนไพไรต์ ("ทองคนโง่") ให้ผงดำแกมเขียวและแข็ง 6–6.5 สีกับความวาวของสองแร่นี้เหมือนกันจึงช่วยอะไรไม่ได้ ต้องใช้สเตรกกับความแข็งมายืนยัน'},
+{t:1,q:'แร่ 2 ก้อนมีสีภายนอกสีดำเหมือนกัน เมื่อขีดบนแผ่นสเตรก ก้อน X ได้ผงสีน้ำตาลแดง ก้อน Y ได้ผงสีดำ ข้อใดถูกต้อง?',
+o:['X กับ Y เป็นแร่ชนิดเดียวกัน เพราะสีภายนอกเหมือนกัน','X กับ Y น่าจะเป็นแร่คนละชนิด (เช่น X อาจเป็นฮีมาไทต์) เพราะสีของผงต่างกัน','สีสเตรกเป็นแค่สีที่ผิวเปลี่ยนไป ใช้จำแนกแร่ไม่ได้','Y ไม่ใช่แร่ เพราะผงเป็นสีดำ'],a:1,
+e:'สีสเตรกคือสีของ "ผงแร่" ซึ่งไม่ขึ้นกับผิวที่อาจเงา ผุ หรือเปลี่ยนสี ฮีมาไทต์สีภายนอกเทาดำ แต่สเตรกน้ำตาลแดงเสมอ ส่วนแมกนีไทต์ดำทั้งภายนอกและผง (และดูดแม่เหล็กด้วย)'},
+{t:2,q:'แร่ก้อนหนึ่ง เล็บมือขูดไม่เป็นรอย แต่เหรียญทองแดงขูดเป็นรอย และตัวมันเองขูดกระจกไม่ได้ ความแข็งน่าจะอยู่ที่เท่าใด?',
+o:['ราว 1 เช่น ทัลก์','ราว 3 เช่น แคลไซต์','ราว 6 เช่น ออร์โทเคลส','ราว 7 เช่น ควอตซ์'],a:1,
+e:'เล็บ (~2.5) ขูดไม่ได้ แปลว่าแข็งกว่า 2.5 เหรียญทองแดง (~3.5) ขูดได้ แปลว่าอ่อนกว่า 3.5 และขูดกระจก (~5.5) ไม่ได้ ช่วงที่เหลือคือราว 3 ตรงกับแคลไซต์ ทัลก์ (1) เล็บก็ขูดได้อยู่แล้ว'},
+{t:3,q:'ฮาไลต์ (เกลือหิน) กับแคลไซต์ ใสไม่มีสีเหมือนกัน สเตรกขาวเหมือนกัน และแตกเป็นแผ่นเรียบ 3 ทิศทางเหมือนกัน ข้อมูลใดช่วยแยกสองแร่นี้ได้ดีที่สุด?',
+o:['สีภายนอก','มุมระหว่างแนวแตกเรียบ','จำนวนทิศทางของแนวแตกเรียบ','สีสเตรก'],a:1,
+e:'ฮาไลต์แตกเป็นก้อนลูกบาศก์ (3 ทิศทาง ตั้งฉาก 90°) ส่วนแคลไซต์แตกเป็นก้อนสี่เหลี่ยมขนมเปียกปูน (3 ทิศทาง ไม่ตั้งฉาก) ส่วนสี สเตรก และจำนวนทิศทาง เหมือนกันทั้งคู่ จึงแยกไม่ได้'},
+{t:2,q:'เพื่อนบอกว่า "แร่ใสวาวเหมือนแก้ว ต้องเป็นควอตซ์แน่ๆ" แต่เมื่อทดสอบ แร่ก้อนนั้นถูกมีดเหล็กขูดเป็นรอย และขูดกระจกไม่ได้ ควรสรุปอย่างไร?',
+o:['ยังเป็นควอตซ์ เพราะลักษณะใสวาว','ไม่ใช่ควอตซ์ เพราะควอตซ์แข็งราว 7 ขูดกระจกได้และมีดเหล็กขูดไม่เข้า น่าจะเป็นแร่ที่อ่อนกว่า เช่น แคลไซต์','ผลทดสอบความแข็งน่าจะผิด ให้เชื่อลักษณะภายนอกไว้ก่อน','ควอตซ์บางก้อนอ่อนกว่าปกติได้'],a:1,
+e:'ลักษณะใสวาวพบได้ในหลายแร่ แต่ความแข็งเป็นตัวเลขที่เทียบกันได้ ควอตซ์ (7) ต้องขูดกระจกได้และมีดเหล็กขูดไม่เป็นรอย เมื่อผลทดสอบขัดกับสิ่งที่ "ดูเหมือน" ให้เชื่อผลทดสอบก่อน'},
+{t:3,q:'ตีควอตซ์ให้แตกแล้วเห็นผิวที่แตกเป็นรอยโค้งเรียบคล้ายก้นหอย เพื่อนคนหนึ่งบอกว่า "ควอตซ์มีแนวแตกเรียบสวยมาก" ข้อใดถูกต้อง?',
+o:['ถูก เพราะผิวที่แตกดูเรียบ','ไม่ถูก ผิวโค้งแบบนี้เป็นรอยแตกแบบก้นหอย ส่วนแนวแตกเรียบต้องเป็นระนาบแบนขนานกัน และแตกซ้ำตามทิศเดิมได้','ถูก เพราะควอตซ์แข็งจึงแตกเรียบ','ไม่ถูก เพราะควอตซ์ไม่แตกเลย'],a:1,
+e:'แนวแตกเรียบ (cleavage) คือการแตกตามระนาบอะตอมที่อ่อนแอ ได้ผิวแบนซ้ำๆ เช่น ไมกาลอกเป็นแผ่น ส่วนควอตซ์ไม่มีระนาบแบบนี้ จึงแตกเป็นผิวโค้ง ขรุขระ (fracture) ความแข็งสูงไม่ได้แปลว่าแตกเรียบ'},
+{t:1,q:'นักเรียนถูแร่ก้อนหนึ่งบนแผ่นสเตรก แต่ไม่ได้ผงสีเลย กลับกลายเป็นแผ่นสเตรกเป็นรอยขีดแทน ควรตีความอย่างไร?',
+o:['แร่นี้อ่อนมากจนไม่ทิ้งผง','แร่น่าจะแข็งกว่าแผ่นสเตรก (ราว 6.5 ขึ้นไป) สเตรกจึงใช้ไม่ได้ ต้องหาหลักฐานจากสมบัติอื่น เช่น ความแข็งและแนวแตก','แร่นี้ไม่มีสี จึงไม่มีสีสเตรก','นักเรียนถูผิดวิธี แร่ทุกชนิดต้องทิ้งผงได้'],a:1,
+e:'แผ่นสเตรกทำจากกระเบื้องไม่เคลือบ แข็งราว 6.5 แร่ที่แข็งกว่านั้น (เช่น ควอตซ์ โทแพซ) จะขูดแผ่นแทนที่จะบดเป็นผง สเตรกจึงมีขีดจำกัด ต้องรู้ว่าเมื่อไรควรเปลี่ยนไปใช้หลักฐานอื่น'},
+{t:4,q:'แร่ก้อนหนึ่งสีเหลืองทองเหลือบเขียว ขีดสเตรกได้ผงสีดำแกมเขียว และตะปูเหล็กขูดเป็นรอยได้ง่าย\nข้อมูลอ้างอิง: ทองคำ (สเตรกเหลือง, แข็ง 2.5–3) / ไพไรต์ (สเตรกดำแกมเขียว, แข็ง 6–6.5) / แคลโคไพไรต์ (สเตรกดำแกมเขียว, แข็ง 3.5–4)\nก้อนนี้คือแร่ใด?',
+o:['ทองคำ เพราะสีเหลืองทองและขูดเป็นรอยง่าย','ไพไรต์ เพราะสเตรกดำแกมเขียว','แคลโคไพไรต์ เพราะสเตรกดำแกมเขียว (ตัดทองคำ) และตะปูขูดได้ง่าย (ตัดไพไรต์)','บอกไม่ได้ เพราะทั้งสามชนิดสีเหลืองเหมือนกัน'],a:2,
+e:'ใช้หลักฐานทีละอย่างตัดตัวเลือก: สเตรกดำแกมเขียว ตัดทองคำออก ตะปูเหล็ก (~5.5) ขูดได้ง่าย ตัดไพไรต์ (6–6.5) ออก เหลือแคลโคไพไรต์ หลักฐานเดียวไม่พอ แต่สองอย่างรวมกันฟันธงได้'},
+{t:4,q:'แร่สีชมพูก้อนหนึ่ง ขูดกระจกได้ แต่ควอตซ์ขูดแร่นี้เป็นรอย และเมื่อตีแตกพบหน้าเรียบเงา 2 ทิศทางตั้งฉากกัน นักเรียน 4 คนสรุปต่างกัน ใครให้เหตุผลดีที่สุด?',
+o:['ฟ้า: "สีชมพู ก็คือโรสควอตซ์"','ฝน: "ขูดกระจกได้ จึงเป็นควอตซ์"','นุ่น: "ควอตซ์ขูดมันเป็นรอย แปลว่าอ่อนกว่าควอตซ์ และควอตซ์ไม่มีแนวแตกเรียบ ดังนั้นไม่ใช่ควอตซ์ น่าจะเป็นเฟลด์สปาร์"','มะลิ: "มีแนวแตกเรียบ แปลว่าแข็งมากที่สุด"'],a:2,
+e:'ฟ้าใช้แค่สี ฝนใช้หลักฐานเดียวที่หลายแร่ทำได้ (เฟลด์สปาร์แข็ง ~6 ก็ขูดกระจกได้) ส่วนมะลิเข้าใจผิดว่าแนวแตกเกี่ยวกับความแข็ง นุ่นรวมความแข็งกับแนวแตกเข้าด้วยกันและตัดควอตซ์ออกได้อย่างมีเหตุผล'}
+];
+var app=document.getElementById('app'),S,order,timer,deadline,locked;
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\n/g,'<br>')}
+function home(){
+ clearInterval(timer);
+ app.innerHTML='<div class="card"><h1>นักสืบแร่</h1><p class="sub">ทบทวนการจำแนกแร่ ก่อนเลิกคาบ</p>'+
+ '<ul class="rules"><li><b>10</b><span>10 ข้อ ข้อละ 20 วินาที เล่นประมาณ 7 นาที</span></li>'+
+ '<li><b>+10</b><span>ตอบถูกได้ 10 คะแนน ตอบผิดมีเฉลยพร้อมเหตุผลทันที</span></li>'+
+ '<li><b>?</b><span>โจทย์ให้คิดจากหลักฐานหลายด้าน ไม่ใช่แค่จำชื่อแร่</span></li>'+
+ '<li><b>♡</b><span>ไม่มีอันดับ ไม่เทียบกับใคร เล่นเพื่อรู้ว่าตัวเองยังสับสนตรงไหน</span></li></ul>'+
+ '<button class="btn" id="go">เริ่มเลย</button></div>';
+ document.getElementById('go').onclick=function(){S={i:0,score:0,res:[]};showQ()};
+}
+function facets(){var h='';for(var k=0;k<10;k++){var c='f';if(k<S.i)c+=S.res[k].ok?' hit':' done';else if(k==S.i)c+=' now';h+='<i class="'+c+'"></i>'}return h}
+function showQ(){
+ var q=Q[S.i];order=shuffle([0,1,2,3]);locked=false;
+ var h='<div class="top"><div class="facets" aria-label="ข้อที่ '+(S.i+1)+' จาก 10">'+facets()+'</div><div class="gems">'+S.score+' คะแนน</div></div>'+
+ '<div class="card"><span class="tag">ข้อ '+(S.i+1)+' · '+TAGS[q.t]+'</span><p class="q">'+esc(q.q)+'</p><div class="opts" role="group">';
+ order.forEach(function(oi,p){h+='<button class="opt" data-p="'+p+'"><span>'+'กขคง'.charAt(p)+'</span><span>'+esc(q.o[oi])+'</span></button>'});
+ h+='</div><div id="fbox" aria-live="polite"></div></div>'+
+ '<div class="tbar" id="tb"><i id="ti"></i></div><div class="tt" id="tx">เหลือ 20 วินาที</div>';
+ app.innerHTML=h;
+ var b=app.querySelectorAll('.opt');for(var k=0;k<b.length;k++)b[k].onclick=function(){answer(+this.dataset.p)};
+ deadline=Date.now()+20000;clearInterval(timer);
+ timer=setInterval(function(){
+  var l=Math.max(0,deadline-Date.now());
+  document.getElementById('ti').style.width=(l/200)+'%';
+  document.getElementById('tx').textContent='เหลือ '+Math.ceil(l/1000)+' วินาที';
+  document.getElementById('tb').className='tbar'+(l<=5000?' low':'');
+  if(l<=0)answer(-1);
+ },100);
+}
+var GOOD=['ใช่เลย! วิเคราะห์ได้เฉียบ','ถูกต้อง ใช้หลักฐานได้ดีมาก','เยี่ยม! นักสืบแร่ตัวจริง','ตรงเป๊ะ เก็บอีก 10 คะแนน'];
+var BAD=['ไม่เป็นไร ข้อนี้ตั้งใจหลอกให้คิดผิดอยู่แล้ว','พลาดได้ นักธรณีวิทยายังพลาดข้อนี้บ่อย ลองดูเหตุผลกัน','เกือบแล้ว ดูเฉลยแล้วจะเห็นว่าเหลืออีกนิดเดียว','ไม่เป็นไร ตรงนี้แหละคือจุดที่เรียนรู้ได้เยอะที่สุด'];
+function answer(p){
+ if(locked)return;locked=true;clearInterval(timer);
+ var q=Q[S.i],right=order.indexOf(q.a),ok=(p===right),timeout=(p===-1);
+ if(ok)S.score+=10;
+ S.res.push({ok:ok,timeout:timeout});
+ var b=app.querySelectorAll('.opt');
+ for(var k=0;k<b.length;k++){b[k].disabled=true;if(k===right)b[k].classList.add('right');else if(k===p)b[k].classList.add('wrong')}
+ var last=S.i===9,t=ok?GOOD[S.i%4]:(timeout?'หมดเวลาแล้ว ไม่เป็นไร ลองดูเฉลยด้วยกัน':BAD[S.i%4]);
+ document.getElementById('fbox').innerHTML='<div class="fb '+(ok?'ok':'no')+'"><h3>'+(ok?'ถูกต้อง +10 คะแนน':'ข้อนี้ยังไม่ได้คะแนน แต่ได้ความรู้')+'</h3><p>'+t+'</p><p>'+esc(q.e)+'</p><button class="btn" id="nx">'+(last?'ดูผลและสรุป':'ข้อต่อไป')+'</button></div>';
+ var n=document.getElementById('nx');n.onclick=function(){if(last)result();else{S.i++;showQ()}};n.focus();
+}
+function result(){
+ var tot=[0,0,0,0,0],hit=[0,0,0,0,0],miss=[];
+ Q.forEach(function(q,k){tot[q.t]++;if(S.res[k].ok)hit[q.t]++;else miss.push(k)});
+ var msg=S.score>=80?'เก่งมาก! คุณใช้หลักฐานหลายด้านได้คล่องแล้ว':S.score>=50?'ทำได้ดีมาก ใกล้ถึงแล้ว เหลือแค่จุดที่ยังสับสนอีกนิดเดียว':'เริ่มเห็นภาพแล้ว ข้อที่พลาดคือโอกาสให้เราเข้าใจลึกขึ้น มาดูด้วยกัน';
+ var h='<div class="card"><p class="sub">เล่นจบแล้ว</p><div class="big">'+S.score+' / 100</div><p>'+msg+'</p><div class="bars">';
+ TAGS.forEach(function(n,k){h+='<div class="bar"><span>'+n+'</span><div><i style="width:'+(hit[k]/tot[k]*100)+'%"></i></div><span>'+hit[k]+'/'+tot[k]+'</span></div>'});
+ h+='</div></div><div class="card sec"><h2>3 นาทีสรุป: สมบัติ 4 อย่างต่างกันตรงไหน</h2><div class="scroll"><table><tr><th>สมบัติ</th><th>คืออะไร</th><th>วิธีดู</th><th>ระวัง</th></tr>'+
+ '<tr><td>สีภายนอก</td><td>สีที่ผิวก้อนแร่</td><td>ดูด้วยตา</td><td>แร่ชนิดเดียวกันสีต่างได้ (สิ่งเจือปน) ผิวผุก็เปลี่ยนสี</td></tr>'+
+ '<tr><td>สีสเตรก</td><td>สีของผงแร่</td><td>ขีดบนแผ่นกระเบื้องไม่เคลือบ</td><td>คงที่กว่าสีภายนอก แต่ใช้ไม่ได้ถ้าแร่แข็งกว่าแผ่น (~6.5)</td></tr>'+
+ '<tr><td>ความแข็ง</td><td>ความทนต่อการขูดขีด</td><td>ขูดเทียบ: เล็บ 2.5 เหรียญทองแดง 3.5 ตะปูเหล็ก/กระจก ~5.5</td><td>เทียบเป็นช่วง และต้องขูดบนผิวสดที่ไม่ผุ</td></tr>'+
+ '<tr><td>แนวแตกเรียบ</td><td>การแตกตามระนาบแบนเรียบ</td><td>ตีให้แตก ดูผิวแบนสะท้อนแสงพร้อมกัน นับทิศและมุม</td><td>ผิวโค้งแบบเปลือกหอย (fracture) ไม่ใช่แนวแตกเรียบ</td></tr></table></div>'+
+ '<p class="sub" style="margin-top:12px">กติกาใช้หลักฐาน: อย่าฟันธงจากอย่างเดียว ใช้หลายด้านตัดตัวเลือกทีละอย่าง</p></div>';
+ h+='<div class="card sec"><h2>ข้อที่ควรทบทวน</h2>';
+ if(!miss.length)h+='<p>ไม่มีข้อที่พลาดเลย เยี่ยมมาก!</p>';
+ miss.forEach(function(k){var q=Q[k];h+='<div class="rv"><p><b>ข้อ '+(k+1)+' · '+TAGS[q.t]+'</b></p><p>คำตอบที่ถูก: '+esc(q.o[q.a])+'</p><p class="sub">'+esc(q.e)+'</p></div>'});
+ h+='</div><p style="margin-top:18px"><button class="btn ghost" id="again">เล่นอีกครั้ง</button></p>';
+ app.innerHTML=h;window.scrollTo(0,0);
+ document.getElementById('again').onclick=home;
+}
+document.addEventListener('keydown',function(e){
+ if(locked||!document.querySelector('.opt'))return;
+ var m={'1':0,'2':1,'3':2,'4':3,'ก':0,'ข':1,'ค':2,'ง':3};
+ if(e.key in m)answer(m[e.key]);
+});
+home();
+</script>
+</body>
+</html>
